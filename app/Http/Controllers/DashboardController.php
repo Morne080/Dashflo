@@ -86,6 +86,29 @@ class DashboardController extends Controller
     }
 
     /**
+     * Static design/demo page for showcasing dashboard capabilities without live metric queries.
+     */
+    public function mockup(Request $request): InertiaResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        return Inertia::render('MockupDashboard', [
+            'dashboard' => [
+                'id' => 0,
+                'name' => 'Static Mockup',
+                'slug' => 'static-mockup',
+                'description' => 'Static demo data only',
+                'is_default' => false,
+            ],
+            'viewer' => [
+                'id' => $user->id,
+                'name' => $user->name,
+            ],
+        ]);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function filterOptions(User $user): array

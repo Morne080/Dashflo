@@ -14,6 +14,7 @@ type DashboardSwitcherProps = {
 
 export function DashboardSwitcher({ currentId, currentName, dashboards }: DashboardSwitcherProps) {
     const [open, setOpen] = useState(false);
+    const mockupActive = route().current('dashboards.mockup');
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -37,6 +38,26 @@ export function DashboardSwitcher({ currentId, currentName, dashboards }: Dashbo
                     Switch dashboard
                 </div>
                 <ul className="max-h-64 space-y-0.5 overflow-y-auto" role="listbox">
+                    <li>
+                        <Link
+                            href={route('dashboards.mockup')}
+                            preserveState
+                            preserveScroll
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                                'flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors hover:bg-muted',
+                                mockupActive && 'bg-muted/80',
+                            )}
+                        >
+                            <span className="min-w-0 flex-1 truncate">Static mockup</span>
+                            <span className="shrink-0 rounded bg-primary/20 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary">
+                                Demo
+                            </span>
+                            {mockupActive ? (
+                                <Check className="size-4 shrink-0 text-primary" aria-label="Current" />
+                            ) : null}
+                        </Link>
+                    </li>
                     {dashboards.map((d) => (
                         <li key={d.id}>
                             <Link

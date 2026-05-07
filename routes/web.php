@@ -22,6 +22,7 @@ Route::post('/hooks/ingest/{token}', [WebhookIngestController::class, 'store'])
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'home'])->name('dashboard');
+    Route::get('/mockup-dashboard', [DashboardController::class, 'mockup'])->name('dashboards.mockup');
 
     Route::get('/dashboards', [DashboardsController::class, 'index'])->name('dashboards.index');
     Route::post('/dashboards', [DashboardsController::class, 'store'])->name('dashboards.store');
