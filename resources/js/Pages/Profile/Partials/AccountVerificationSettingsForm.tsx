@@ -90,20 +90,20 @@ export default function AccountVerificationSettingsForm({ className = '' }: { cl
         <section id="account-verification" className={className}>
             <header className="mb-4">
                 <div className="flex items-center gap-2">
-                    <ShieldCheck className="size-5 text-gray-700" />
-                    <h2 className="text-lg font-medium text-gray-900">Lead verification (workspace defaults)</h2>
+                    <ShieldCheck className="size-5 text-muted-foreground" />
+                    <h2 className="text-lg font-medium text-foreground">Lead verification (workspace defaults)</h2>
                 </div>
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-muted-foreground">
                     Applies to every integration source that has &quot;Use workspace account defaults&quot; turned on.
                     Sources can still override Twilio / TrustedForm secrets only.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-                    <h3 className="text-sm font-semibold text-gray-900">Twilio phone lookup</h3>
+                <div className="rounded-md border border-border bg-background p-4">
+                    <h3 className="text-sm font-semibold text-foreground">Twilio phone lookup</h3>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                        <span className="text-sm text-gray-600">Enabled for all inheriting sources</span>
+                        <span className="text-sm text-muted-foreground">Enabled for all inheriting sources</span>
                         <Switch
                             checked={state.twilio_lookup.enabled}
                             onCheckedChange={(v) =>
@@ -158,10 +158,10 @@ export default function AccountVerificationSettingsForm({ className = '' }: { cl
                     </div>
                 </div>
 
-                <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-                    <h3 className="text-sm font-semibold text-gray-900">Email legitimacy</h3>
+                <div className="rounded-md border border-border bg-background p-4">
+                    <h3 className="text-sm font-semibold text-foreground">Email legitimacy</h3>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                        <span className="text-sm text-gray-600">DNS / format checks</span>
+                        <span className="text-sm text-muted-foreground">DNS / format checks</span>
                         <Switch
                             checked={state.email_verification.enabled}
                             onCheckedChange={(v) =>
@@ -174,10 +174,10 @@ export default function AccountVerificationSettingsForm({ className = '' }: { cl
                     </div>
                 </div>
 
-                <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-                    <h3 className="text-sm font-semibold text-gray-900">TrustedForm</h3>
+                <div className="rounded-md border border-border bg-background p-4">
+                    <h3 className="text-sm font-semibold text-foreground">TrustedForm</h3>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                        <span className="text-sm text-gray-600">Retain when certificate URL is present</span>
+                        <span className="text-sm text-muted-foreground">Retain when certificate URL is present</span>
                         <Switch
                             checked={state.trustedform.enabled}
                             onCheckedChange={(v) =>
