@@ -1,0 +1,23 @@
+/* Scoped under `.dashflo-edit-canvas` — imported from `Dashboard.tsx` only */
+
+.dashflo-edit-canvas .react-grid-item.react-grid-placeholder {
+    border-radius: 0.5rem !important;
+    border: 2px dashed rgb(129 140 248 / 0.85) !important;
+    background: rgb(99 102 241 / 0.18) !important;
+    opacity: 1 !important;
+}
+
+.dashflo-edit-canvas .react-grid-item > .react-resizable-handle {
+    opacity: 1 !important;
+}
+
+.dashflo-edit-canvas .react-grid-item > .react-resizable-handle::after {
+    border-color: rgb(129 140 248 / 0.9) !important;
+    width: 10px !important;
+    height: 10px !important;
+}
+
+.dashflo-edit-canvas .react-grid-item.react-draggable-dragging,
+.dashflo-edit-canvas .react-grid-item.resizing {
+    z-index: 30 !important;
+}

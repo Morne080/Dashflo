@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: #0a0a0a;
+        --foreground: #fafafa;
+        --card: #141414;
+        --card-foreground: #fafafa;
+        --popover: #141414;
+        --popover-foreground: #fafafa;
+        --primary: #6366f1;
+        --primary-foreground: #fafafa;
+        --secondary: #1f1f1f;
+        --secondary-foreground: #fafafa;
+        --muted: #1f1f1f;
+        --muted-foreground: #a1a1aa;
+        --accent: #2a2a2a;
+        --accent-foreground: #fafafa;
+        --destructive: #6d28d9;
+        --destructive-foreground: #fafafa;
+        --border: #2a2a2a;
+        --input: #2a2a2a;
+        --ring: #818cf8;
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: #0a0a0a;
+        --foreground: #fafafa;
+        --card: #141414;
+        --card-foreground: #fafafa;
+        --popover: #141414;
+        --popover-foreground: #fafafa;
+        --primary: #6366f1;
+        --primary-foreground: #fafafa;
+        --secondary: #1f1f1f;
+        --secondary-foreground: #fafafa;
+        --muted: #1f1f1f;
+        --muted-foreground: #a1a1aa;
+        --accent: #2a2a2a;
+        --accent-foreground: #fafafa;
+        --destructive: #6d28d9;
+        --destructive-foreground: #fafafa;
+        --border: #2a2a2a;
+        --input: #2a2a2a;
+        --ring: #818cf8;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased;
+    }
+}
+
+/* react-day-picker v9 — range selection on dark UI (library defaults assume light theme). */
+@layer components {
+    .dashflo-calendar.rdp-root {
+        --rdp-accent-color: #6366f1;
+        /* Middle of range: tinted primary on dark card (not pastel #f0f0ff). */
+        --rdp-accent-background-color: rgb(99 102 241 / 0.24);
+        /* Explicit zinc-300 so numbers stay readable on the tint (not inherited near-white). */
+        --rdp-range_middle-color: #d4d4d8;
+        /* Two-month view: extra breathing room between panes. */
+        --rdp-months-gap: 1.25rem;
+    }
+
+    /* Library sets .rdp-selected { font-size: large } — wrecks range legibility & alignment. */
+    .dashflo-calendar .rdp-selected {
+        font-size: inherit;
+        font-weight: inherit;
+    }
+
+    .dashflo-calendar .rdp-range_middle .rdp-day_button {
+        color: var(--rdp-range_middle-color);
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* Today uses accent color; inside a range band it must match other middle days. */
+    .dashflo-calendar .rdp-range_middle.rdp-today .rdp-day_button {
+        color: var(--rdp-range_middle-color);
+    }
+}
+
+/* Inertia.js progress (createInertiaApp `progress` + includeCSS: nprogress) */
+#nprogress .bar {
+    height: 2px !important;
+    background: #6366f1 !important;
+}
+
+#nprogress .peg {
+    box-shadow:
+        0 0 10px #6366f1,
+        0 0 5px #818cf8 !important;
+}

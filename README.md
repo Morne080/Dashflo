@@ -1,101 +1,148 @@
-# 
+# Dashflo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Dashflo is a Laravel + Inertia (React) performance dashboard for lead-generation analytics: KPIs, daily metrics, buyer/supplier/state performance, disposition and breakdown tables, and CSV exports driven by the same filters as the UI.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Requirements
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- PHP 8.2+
+- Composer
+- Node.js 18+ and npm
+- MySQL (see [XAMPP](#xampp-mysql) below)
 
-## Run tasks
+## Install
 
-To run the dev server for your app, use:
+1. Clone the repository and enter the project directory.
 
-```sh
-npx nx serve web
+2. Install PHP dependencies:
+
+   ```bash
+   composer install
+   ```
+
+3. Install JavaScript dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Environment file:
+
+   ```bash
+   copy .env.example .env
+   ```
+
+   On macOS/Linux use `cp .env.example .env`.
+
+5. Generate the application key:
+
+   ```bash
+   php artisan key:generate
+   ```
+
+6. Configure the database in `.env` (see [XAMPP](#xampp-mysql)).
+
+7. Run migrations (no demo data by default):
+
+   ```bash
+   php artisan migrate
+   ```
+
+   Register your first account at `/register`, or create an administrator from the CLI:
+
+   ```bash
+   php artisan dashflo:make-admin your@email.com 'YourSecurePassword123!'
+   ```
+
+   The default Overview dashboard is created when you open the app.
+
+   **Optional — local demo dataset** (~1k sample leads): `php artisan db:seed --class=DashfloSeeder`  
+   **Optional — pre-built Overview widgets** (runs for the first user): `php artisan db:seed --class=DashboardSeeder`
+
+   **Wipe everything and start over** (drops all tables and reruns migrations):
+
+   ```bash
+   php artisan migrate:fresh
+   ```
+
+## Run (development)
+
+Use **two** terminals from the project root:
+
+1. **Vite** (frontend dev server + HMR):
+
+   ```bash
+   npm run dev
+   ```
+
+2. **Laravel** (PHP application):
+
+   ```bash
+   php artisan serve
+   ```
+
+   Open the URL shown (typically `http://127.0.0.1:8000`) and register a user.
+
+**Production assets:**
+
+```bash
+npm run build
 ```
 
-To create a production bundle:
+## Project structure (high level)
 
-```sh
-npx nx build web
+| Path | Role |
+|------|------|
+| `app/Http/Controllers/DashboardController.php` | Inertia entry for the main dashboard; passes filters, metrics arrays, and sparklines. |
+| `app/Http/Controllers/DashboardExportController.php` | `GET /api/export/{table}` — streams CSV using the same query string filters as the dashboard. |
+| `app/Services/MetricsService.php` | **Where to add new metrics**: aggregations, daily series, sparklines, and export row shapes. |
+| `app/Dashboards/Registry.php` | Singleton catalog of widget types + metrics (code-defined; tenants pick from registry, not SQL). |
+| `app/Dashboards/Widgets/` | Widget type definitions (`WidgetType` subclasses). |
+| `app/Dashboards/Metrics/` | Metric definitions (`Metric` subclasses wrapping `MetricsService`). |
+| `app/Providers/DashboardRegistryServiceProvider.php` | Registers all widgets/metrics with the registry (see `bootstrap/providers.php` in Laravel 11). |
+| `app/DTO/FilterRequest.php` | Dashboard filter state from the query string (defaults to current calendar month). |
+| `resources/js/Pages/Dashboard.tsx` | Main dashboard page: KPIs, `FilterBar`, and table sections. |
+| `resources/js/Components/dashboard/DataTable.tsx` | Shared TanStack table (sorting, heatmaps, optional total row). |
+| `resources/js/Components/dashboard/tables/` | **Where to add new tables**: thin wrappers with column defs + `DataTable` props. |
+| `resources/js/Components/dashboard/FilterBar.tsx` | Dashboard filters synced to the URL; partial Inertia reloads. |
+| `resources/js/types/dashboard.ts` | TypeScript types for Inertia props and partial-reload keys. |
+| `routes/web.php` | Dashboard route (`/`) and export route (`/api/export/{table}`). |
+
+## Adding features
+
+### New metrics (backend)
+
+1. Extend `MetricsService` with a new method (follow existing patterns: `baseQuery()`, `FilterRequest`, caching via `remember()`).
+2. Return the shape you need (array of rows for tables, scalars for KPIs).
+3. Register the prop in `DashboardController@index`.
+4. Add the key to `DASHBOARD_PARTIAL_RELOAD_KEYS` in `resources/js/types/dashboard.ts` if the UI should refresh it on filter change.
+
+### New dashboard tables (frontend)
+
+1. Add a component under `resources/js/Components/dashboard/tables/` (column defs, `DataTable`, optional `heatmapColumns` / `totalRow`).
+2. Import it in `Dashboard.tsx` and pass the matching Inertia prop.
+3. For CSV export, add the table slug to `DashboardExportController::TABLES` and the `match` arms, and add a `TableExportButton` with the same slug.
+
+## XAMPP (MySQL)
+
+Typical local setup:
+
+- **Database name:** `dashflo`
+- **User:** `root`
+- **Password:** *(empty)*
+
+In `.env`, set for example:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dashflo
+DB_USERNAME=root
+DB_PASSWORD=
 ```
 
-To see all available targets to run for a project, run:
+Ensure MySQL is running in XAMPP before `php artisan migrate`.
 
-```sh
-npx nx show project web
-```
+## License
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/react:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+MIT (see repository `LICENSE` if present).
