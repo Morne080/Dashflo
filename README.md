@@ -143,6 +143,64 @@ DB_PASSWORD=
 
 Ensure MySQL is running in XAMPP before `php artisan migrate`.
 
+## Local -> GitHub -> Plesk workflow
+
+This repository includes helper scripts under `scripts/deploy` to make deployments repeatable.
+
+### 1) Local: push code to GitHub (Windows/PowerShell)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\deploy\local-to-github.ps1 -CommitMessage "feat: your update"
+```
+
+- Stages changes
+- Creates a commit (unless there is nothing new)
+- Pushes current branch to `origin`
+
+Use `-SkipCommit` if you already committed manually.
+
+### 2) Local: export your database dump
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\deploy\local-db-export.ps1
+```
+
+By default this reads DB settings from `.env` and writes to `database/dumps/<db>-<timestamp>.sql`.
+
+### 3) Plesk/VPS: deploy application code
+
+From your Laravel root on the server (where `artisan` exists, usually `httpdocs`):
+
+```bash
+bash ./scripts/deploy/plesk-deploy.sh
+```
+
+This script will:
+
+- Pull latest code from `origin/master` (fast-forward only)
+- Install Composer dependencies
+- Ensure `.env` exists
+- Generate `APP_KEY` if missing
+- Run `php artisan migrate --force`
+- Rebuild Laravel caches
+- Build frontend assets if `npm` is available
+
+### 4) Plesk/VPS: import database dump
+
+Upload your SQL dump to the server, then run:
+
+```bash
+bash ./scripts/deploy/plesk-db-import.sh /path/to/dump.sql
+```
+
+The import script reads DB credentials from `.env`.
+
+### 5) Plesk hosting settings checklist
+
+- Set domain document root to `httpdocs/public`
+- Confirm `.env` is in `httpdocs/.env` (not inside `public`)
+- Ensure `storage` and `bootstrap/cache` are writable
+
 ## License
 
 MIT (see repository `LICENSE` if present).

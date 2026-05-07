@@ -10,7 +10,7 @@
         --card-foreground: #fafafa;
         --popover: #141414;
         --popover-foreground: #fafafa;
-        --primary: #6366f1;
+        --primary: #4f46e5;
         --primary-foreground: #fafafa;
         --secondary: #1f1f1f;
         --secondary-foreground: #fafafa;
@@ -22,7 +22,7 @@
         --destructive-foreground: #fafafa;
         --border: #2a2a2a;
         --input: #2a2a2a;
-        --ring: #818cf8;
+        --ring: #6366f1;
         --radius: 0.5rem;
     }
 
@@ -33,7 +33,7 @@
         --card-foreground: #fafafa;
         --popover: #141414;
         --popover-foreground: #fafafa;
-        --primary: #6366f1;
+        --primary: #4f46e5;
         --primary-foreground: #fafafa;
         --secondary: #1f1f1f;
         --secondary-foreground: #fafafa;
@@ -45,7 +45,7 @@
         --destructive-foreground: #fafafa;
         --border: #2a2a2a;
         --input: #2a2a2a;
-        --ring: #818cf8;
+        --ring: #6366f1;
     }
 
     * {
@@ -60,9 +60,9 @@
 /* react-day-picker v9 — range selection on dark UI (library defaults assume light theme). */
 @layer components {
     .dashflo-calendar.rdp-root {
-        --rdp-accent-color: #6366f1;
+        --rdp-accent-color: #4f46e5;
         /* Middle of range: tinted primary on dark card (not pastel #f0f0ff). */
-        --rdp-accent-background-color: rgb(99 102 241 / 0.24);
+        --rdp-accent-background-color: rgb(79 70 229 / 0.24);
         /* Explicit zinc-300 so numbers stay readable on the tint (not inherited near-white). */
         --rdp-range_middle-color: #d4d4d8;
         /* Two-month view: extra breathing room between panes. */
@@ -90,11 +90,11 @@
 /* Inertia.js progress (createInertiaApp `progress` + includeCSS: nprogress) */
 #nprogress .bar {
     height: 2px !important;
-    background: #6366f1 !important;
+    background: #4f46e5 !important;
 }
 
 #nprogress .peg {
     box-shadow:
-        0 0 10px #6366f1,
-        0 0 5px #818cf8 !important;
+        0 0 10px #4f46e5,
+        0 0 5px #6366f1 !important;
 }
